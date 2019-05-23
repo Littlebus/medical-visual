@@ -2,9 +2,8 @@
   <div class="history_detail_page">
         <head-top head-title="体检记录详情" go-back='true'></head-top>
         <ul class="history_list_ul">
-            <li class="history_list_li" v-for="(item,index) in recordDetail" :key="item.id">
+            <li class="history_list_li" v-for="(item,index) in recordDetail_" :key="item.id">
                 <section class="history_item_right">
-                    <section @click="showDetail(item.tag)">
                         <header class="history_item_right_header">
                             <section class="history_header">
                                 <h4><span class="ellipsis">{{index}}</span>
@@ -19,11 +18,6 @@
                 </section>
             </li>
         </ul>
-        <!-- <section id="scroll_section" class="scroll_container">
-            <section class="scroll_insert">
-
-            </section>
-        </section> -->
         <transition name="loading">
             <loading v-if="showLoading"></loading>
         </transition>
@@ -60,6 +54,17 @@
             ...mapState([
                 'historyRecordDetail', 'userInfo'
             ]),
+            // 处理过的recordDetail
+            recordDetail_: function(){
+                let obj = this.recordDetail;
+                let ret = {};
+                for(let key in obj){
+                    if(key === 'id' || key === '_time')
+                        continue;
+                    ret[key] = obj[key];
+                }
+                return ret;
+            }
         },
         methods: {
             async initData(){
@@ -67,6 +72,7 @@
                     let obj = await getbodyrecord(this.historyRecordDetail);
                     if(obj.success){
                         this.recordDetail = obj.data;
+                        console.log(obj.data);
                     }
                     this.showLoading = false;
                 }
