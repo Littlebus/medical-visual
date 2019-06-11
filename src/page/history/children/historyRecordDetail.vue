@@ -15,11 +15,25 @@
                             </h4>
                         </header>
                     </section>
+            </li>
+        </ul>
+        <ul class="history_list_ul" style="margin-top:1em">
+            <li class="history_list_li" v-for="(item,index) in predictRes" :key="item.id">
+                <section class="history_item_right">
+                    <header class="history_item_right_header">
+                        <section class="history_header">
+                            <h4><span class="ellipsis">{{index}}</span>
+                            </h4>
+                        </section>
+                        <h4 class="history_status">
+                            {{item}}
+                        </h4>
+                    </header>
                 </section>
             </li>
         </ul>
         <transition name="loading">
-            <loading v-if="showLoading"></loading>
+            <loading v-if="showLoading || predicting"></loading>
         </transition>
     </div>
 </template>
@@ -28,7 +42,7 @@
     import {mapState, mapMutations} from 'vuex'
     import headTop from 'src/components/header/head'
     import {getImgPath} from 'src/components/common/mixin'
-    import {getbodyrecord} from 'src/service/getData'
+    import {getbodyrecord, makepepredict, getpepredict} from 'src/service/getData'
     import loading from 'src/components/common/loading'
     import BScroll from 'better-scroll'
     import {imgBaseUrl} from 'src/config/env'
@@ -39,11 +53,15 @@
             return{
                 recordDetail: null,
                 showLoading: true, //显示加载动画
-                imgBaseUrl
+                predicting: true,
+                imgBaseUrl,
+                predictRes: null
             }
         },
         mounted(){
             this.initData();
+            makepepredict(this.historyRecordDetail);
+            this.predict();
         },
         mixins: [getImgPath],
         components: {
@@ -70,13 +88,38 @@
             async initData(){
                 if (this.userInfo && this.userInfo.id) {
                     let obj = await getbodyrecord(this.historyRecordDetail);
+                    console.log(this.historyRecordDetail)
                     if(obj.success){
-                        this.recordDetail = obj.data;
-                        console.log(obj.data);
+                        // if(this.recordDetail)
+                        //     this.recordDetail = {...obj.data, ...this.recordDetail};
+                        // else
+                            this.recordDetail = obj.data;
                     }
                     this.showLoading = false;
                 }
             },
+            async predict(){
+                if (this.userInfo && this.userInfo.id) {
+                    let obj = await getpepredict(this.historyRecordDetail);
+                    console.log(obj)
+                    if(obj.success){
+                        let res = eval(`(${obj.data})`.replace(/\[|]/g,'')
+                        .replace("LDLC", "低密度脂蛋白")
+                        .replace("GYSZ", "甘油三酯")
+                        .replace("NS", "尿酸"));
+                        for(let key in res){
+                            if(res[key] == 1)
+                                res[key] = "偏高";
+                            else
+                                res[key] = "正常";
+                        }
+                        this.predictRes = res;
+                        this.predicting = false;
+                    } else {
+                        setTimeout(this.predict, 500);
+                    }
+                }
+            }
         },
         watch: {
             userInfo: function (value) {
@@ -164,13 +207,14 @@
                             align-items: center;
                             justify-content: flex-start;
                             @include sc(.75rem, #333);
-                            line-height: 1rem;
+                            line-height: 1.1rem;
                             margin-left:1rem;
                         }
                     }
                     .history_status{
                         margin-right:1rem;
-                        @include sc(0.8rem, #333);
+                        line-height: 1.1rem;
+                        @include sc(0.75rem, #333);
                     }
                 }
             }
