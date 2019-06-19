@@ -200,12 +200,10 @@ export default {
             0,
             this.$refs.groupHeight.offsetHeight - window.innerHeight
           );
-          console.log('here', this.$refs.groupHeight.offsetHeight - window.innerHeight)
         } else {
           const scrollPosition =
             this.$refs.groupHeight.offsetHeight - this.lastPageHeight;
           window.scrollTo(0, scrollPosition);
-          console.log('here1', scrollPosition)
         }
         this.lastPageHeight = this.$refs.groupHeight.offsetHeight;
       });
@@ -214,29 +212,27 @@ export default {
       // 暂时存在问题：一秒内发送多个消息只能显示最后一条；滚轮滚到底端
       let getData = await app_getmessage(this.infor.to_user_id, 0);
       let groupData = getData.data;
-        console.log(groupData)
-        let i = 0;
-        for (i = 0; i < groupData.length; i++) {
-          if (new Date(groupData[i].updated_at) <= this.lastMessageTime) break;
-        }
-        if(i > 0){
-          if (new Date(groupData[0].updated_at) > this.lastMessageTime)
-            this.lastMessageTime = new Date(groupData[0].updated_at);
-          let newData = groupData.slice(0, i);
-          newData.reverse();
-          this.groupconversine.push(...newData);
+      let i = 0;
+      for (i = 0; i < groupData.length; i++) {
+        if (new Date(groupData[i].updated_at) <= this.lastMessageTime) break;
+      }
+      if (i > 0) {
+        if (new Date(groupData[0].updated_at) > this.lastMessageTime)
+          this.lastMessageTime = new Date(groupData[0].updated_at);
+        let newData = groupData.slice(0, i);
+        newData.reverse();
+        this.groupconversine.push(...newData);
 
-          this.$nextTick(() => {
-            this.loadStatus = false;
-              this.underscore = false;
-              window.scrollTo(
-                0,
-                this.$refs.groupHeight.offsetHeight - window.innerHeight
-              );
-            this.lastPageHeight = this.$refs.groupHeight.offsetHeight;
-          });
-        }
-
+        this.$nextTick(() => {
+          this.loadStatus = false;
+          this.underscore = false;
+          window.scrollTo(
+            0,
+            this.$refs.groupHeight.offsetHeight - window.innerHeight
+          );
+          this.lastPageHeight = this.$refs.groupHeight.offsetHeight;
+        });
+      }
     },
     //加载更多
     loadMore() {
