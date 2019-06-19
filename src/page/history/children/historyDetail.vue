@@ -5,6 +5,24 @@
             <el-main class="home_today" id="container">
             </el-main>
         </el-container>
+
+        <ul class="history_list_ul">
+            <li class="history_list_li" v-for="(item,index) in predictRes" :key="item.id">
+                <section class="history_item_right">
+                        <header class="history_item_right_header">
+                            <section class="history_header">
+                                <h4><span class="ellipsis">{{index}}</span>
+                                </h4>
+                                
+                            </section>
+                            <h4 class="history_status">
+                                {{item}}
+                            </h4>
+                        </header>
+                    </section>
+                </section>
+            </li>
+        </ul>
         <!-- <section id="scroll_section" class="scroll_container">
             <section class="scroll_insert">
 
@@ -31,7 +49,8 @@
       data(){
             return{
                 showLoading: true, //显示加载动画
-                imgBaseUrl
+                imgBaseUrl,
+                predictRes: {"预测结果": "无"},
             }
         },
         mounted(){
@@ -130,7 +149,36 @@
   
 <style lang="scss" scoped>
     @import 'src/style/mixin';
-  
+    .history_list_ul{
+        .history_list_li{
+            background-color: #fff;
+            display: flex;
+            // margin-bottom: 0.5rem;
+            padding: .6rem .6rem 0;
+            .history_item_right{
+                flex: 5;
+                .history_item_right_header{
+                    border-bottom: 0.025rem solid #f5f5f5;
+                    padding-bottom: .3rem;
+                    @include fj;
+                    .history_header{
+                        h4{
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-start;
+                            @include sc(.75rem, #333);
+                            line-height: 1rem;
+                            margin-left:1rem;
+                        }
+                    }
+                    .history_status{
+                        margin-right:1rem;
+                        @include sc(0.8rem, #333);
+                    }
+                }
+            }
+        }
+    }
     .history_detail_page{
         position: fixed;
         top: 0;

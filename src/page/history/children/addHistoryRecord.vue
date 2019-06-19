@@ -32,14 +32,14 @@
           </header>
         </section>
       </li>
-      <li class="history_list_li">
+      <li class="history_list_li" >
         <el-button
           type="primary"
           name="submit"
           class="submit_button"
           style="color:white"
           @click="upload"
-        >提交</el-button>
+        ><span style="color:white">提交</span></el-button>
       </li>
     </form>
   </div>

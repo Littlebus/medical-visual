@@ -17,7 +17,9 @@
                     </section>
             </li>
         </ul>
-        <ul class="history_list_ul" style="margin-top:1em">
+        <ul class="history_list_ul">
+            <li class="history_list_li" style="background-color:#F5F5F5; padding-top:2em">
+            </li>
             <li class="history_list_li" v-for="(item,index) in predictRes" :key="item.id">
                 <section class="history_item_right">
                     <header class="history_item_right_header">
